@@ -1,37 +1,35 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { GetToken } from '../utils/token';
 
-const sid = '77b1d658-65fc-4fd3-97e3-fc2c3e2d54d2';
 
-// ✅ Общая функция для baseQuery с токеном
-const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_URL,
-  prepareHeaders: (headers) => {
-    const token = GetToken();
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
-    }
-    return headers;
-  },
-});
 
-// ✅ Категории
 export const TodoApi = createApi({
   reducerPath: 'TodoApi',
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
-  tagTypes: ['Todo'],
+  baseQuery: fetchBaseQuery({ baseUrl: "http://37.27.29.18:8002/" }),
+  tagTypes: ["Todo"],
   endpoints: (build) => ({
     getTodo: build.query({
       query: () => `Category/get-categories`,
-      providesTags: ['Todo'],
-    }),
-  }),
-});
+      providesTags: ["Todo"]
+    })
+  }) 
+})
 
-// ✅ Профиль пользователя
+
+const sid = '77b1d658-65fc-4fd3-97e3-fc2c3e2d54d2'
+
 export const userProfileApi = createApi({
   reducerPath: 'userProfileApi',
-  baseQuery: baseQueryWithAuth,
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'http://37.27.29.18:8002/',
+    prepareHeaders: (headers) => {
+      const token = GetToken();
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
   tagTypes: ['UserProfile'],
   endpoints: (build) => ({
     getUserProfileById: build.query({
@@ -41,44 +39,56 @@ export const userProfileApi = createApi({
   }),
 });
 
-// ✅ Продукты
+
+
+
 export const Product = createApi({
   reducerPath: 'Product',
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
-  tagTypes: ['Todo', 'Byid'],
+  baseQuery: fetchBaseQuery({ baseUrl: "http://37.27.29.18:8002/" }),
+  tagTypes: ["Todo", "Byid"],
   endpoints: (build) => ({
     LazyGetTodo: build.query({
       query: () => `Product/get-products`,
-      providesTags: ['Todo'],
+      providesTags: ['Todo']
     }),
     GetByid: build.query({
       query: (id) => `Product/get-product-by-id?id=${id}`,
-      providesTags: ['Byid'],
-    }),
-  }),
-});
+      providesTags: ["Byid"]
+    })
+  })
+})
 
-// ✅ Цвета
 export const Color = createApi({
   reducerPath: 'Color',
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_URL }),
-  tagTypes: ['Todo'],
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://37.27.29.18:8002/' }),
+  tagTypes: ["Todo"],
   endpoints: (build) => ({
     GetColor: build.query({
-      query: () => `Color/get-colors`,
-      providesTags: ['Todo'],
-    }),
-  }),
-});
+      query: () => 'Color/get-colors',
+      providesTags: ['Todo']
+    })
+  })
+})
 
-// ✅ Корзина
+
+
+
 export const Cart = createApi({
   reducerPath: 'Cart',
-  baseQuery: baseQueryWithAuth,
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: 'http://37.27.29.18:8002/',
+    prepareHeaders: (headers, { getState }) => {
+      const token = GetToken();
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
   tagTypes: ['Todo'],
   endpoints: (build) => ({
     GetCart: build.query({
-      query: () => `Cart/get-products-from-cart`,
+      query: () => 'Cart/get-products-from-cart',
       providesTags: ['Todo'],
     }),
     AddToCart: build.mutation({
@@ -86,7 +96,7 @@ export const Cart = createApi({
         url: `Cart/add-product-to-cart?id=${id}`,
         method: 'POST',
       }),
-      invalidatesTags: ['Todo'],
+      invalidatesTags: ['Todo'], 
     }),
     DeleteFromCart: build.mutation({
       query: (id) => ({
@@ -97,7 +107,7 @@ export const Cart = createApi({
     }),
     ClearCart: build.mutation({
       query: () => ({
-        url: `Cart/clear-cart`,
+        url: 'Cart/clear-cart',
         method: 'DELETE',
       }),
       invalidatesTags: ['Todo'],
@@ -105,9 +115,11 @@ export const Cart = createApi({
   }),
 });
 
-// ✅ Экспорты хуков
-export const { useGetTodoQuery } = TodoApi;
-export const { useLazyGetTodoQuery, useGetByidQuery } = Product;
-export const { useGetColorQuery } = Color;
-export const { useGetCartQuery, useAddToCartMutation, useDeleteFromCartMutation, useClearCartMutation } = Cart;
+
+
+
+export const { useGetTodoQuery } = TodoApi
+export const { useLazyGetTodoQuery, useGetByidQuery } = Product
+export const { useGetColorQuery } = Color
+export const { useGetCartQuery, useAddToCartMutation , useDeleteFromCartMutation, useClearCartMutation} = Cart;
 export const { useGetUserProfileByIdQuery } = userProfileApi;
