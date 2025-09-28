@@ -1,44 +1,46 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 import {
   useGetCartQuery,
   useClearCartMutation,
   useDeleteFromCartMutation,
-   useAddToCartMutation,
-} from '../api/GetApi';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
-import TextField from '@mui/material/TextField';
+} from "../api/GetApi";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import Button from "@mui/material/Button";
+import { Link } from "react-router-dom";
+import TextField from "@mui/material/TextField";
 
 const Cart = () => {
   const { data: cart, isLoading, isError } = useGetCartQuery();
   const [clearCart] = useClearCartMutation();
   const [deleteFromCart] = useDeleteFromCartMutation();
-  const baseUrl = import.meta.env.VITE_API_URL;
 
+  // ✅ baseUrl с защитой
+  const baseUrl = (import.meta.env.VITE_API_URL || "https://store-api.softclub.tj/").replace(/\/?$/, "/");
+
+  // ✅ Удаление товара
   const handleDelete = async (id) => {
     try {
       await deleteFromCart(id);
     } catch (error) {
-      console.error(error);
+      console.error("Ошибка удаления:", error);
     }
   };
 
+  // ✅ Собираем все продукты из корзины
   const allProducts = useMemo(() => {
     if (!cart?.data) return [];
-    return cart.data.flatMap((cartItem) =>
-      cartItem.productsInCart ? cartItem.productsInCart : []
-    );
+    return cart.data.flatMap((cartItem) => cartItem.productsInCart || []);
   }, [cart]);
 
+  // ✅ Подсчет сумм
   const subtotal = useMemo(() => {
     return allProducts.reduce((sum, item) => {
-      const price = item.product.discountPrice || item.product.price || 0;
+      const price = item?.product?.discountPrice || item?.product?.price || 0;
       return sum + price;
     }, 0);
   }, [allProducts]);
 
-  const shipping = 10;
+  const shipping = allProducts.length > 0 ? 10 : 0;
   const total = subtotal + shipping;
 
   if (isLoading) return <div className="mt-[140px] text-center">Загрузка корзины...</div>;
@@ -46,13 +48,14 @@ const Cart = () => {
 
   return (
     <div className="mt-[140px]">
-      <div className="flex justify-between w-[80%] ml-[11%] mt-[70px]">
+      <div className="flex justify-between w-[80%] ml-[11%] mt-[70px] font-bold text-lg">
         <h1>Product</h1>
         <h1>Price</h1>
         <h1>Quantity</h1>
         <h1>Subtotal</h1>
       </div>
 
+      {/* 🛒 Список товаров */}
       <div className="mt-[50px]">
         {allProducts.length > 0 ? (
           allProducts.map((e) => (
@@ -62,24 +65,24 @@ const Cart = () => {
             >
               <div className="flex items-center gap-[10px] w-[20%]">
                 <img
-                  src={`${baseUrl}images/${e.product.image}`}
-                  alt={e.product.productName}
-                  className="w-[50px] h-[50px] object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = "/default-product.png";
+                  src={`${baseUrl}images/${e?.product?.image}`}
+                  alt={e?.product?.productName}
+                  className="w-[50px] h-[50px] object-cover rounded"
+                  onError={(ev) => {
+                    ev.currentTarget.src = "/default-product.png";
                   }}
                 />
-                <h1 className="text-[16px] font-semibold">{e.product.productName}</h1>
+                <h1 className="text-[16px] font-semibold truncate">{e?.product?.productName}</h1>
               </div>
 
               <h1 className="w-[20%]">
-                <b>$</b> {e.product.price}
+                <b>$</b> {e?.product?.price}
               </h1>
 
               <div className="w-[58px] h-[40px] flex items-center justify-center">1</div>
 
               <h1>
-                <b>$</b> {e.product.discountPrice || e.product.price}
+                <b>$</b> {e?.product?.discountPrice || e?.product?.price}
               </h1>
 
               <button
@@ -93,27 +96,29 @@ const Cart = () => {
           ))
         ) : (
           <div className="h-[200px]">
-            <p className="text-center text-[45px] mt-20 text-gray-500">Ваша корзина пуста</p>
+            <p className="text-center text-[45px] mt-20 text-gray-500">🛒 Ваша корзина пуста</p>
           </div>
         )}
       </div>
 
+      {/* 🛠️ Кнопки управления корзиной */}
       <div className="flex justify-between w-[88%] ml-[6%] mt-[100px]">
-        <Link to={'/ourProducts'}>
+        <Link to={"/ourProducts"}>
           <Button
-            sx={{ border: '1px solid black', color: 'black', padding: '10px' }}
+            sx={{ border: "1px solid black", color: "black", padding: "10px" }}
             variant="outlined"
           >
             Return To Shop
           </Button>
         </Link>
+
         <div className="flex gap-[20px]">
-          <Button sx={{ border: '1px solid black', color: 'black' }} variant="outlined">
+          <Button sx={{ border: "1px solid black", color: "black" }} variant="outlined">
             Update Cart
           </Button>
           <Button
             onClick={() => clearCart()}
-            sx={{ border: '1px solid red', color: 'red' }}
+            sx={{ border: "1px solid red", color: "red" }}
             variant="outlined"
           >
             Remove all
@@ -121,28 +126,29 @@ const Cart = () => {
         </div>
       </div>
 
+      {/* 📦 Итоговая информация */}
       <div className="flex justify-around mt-[100px]">
         <div className="flex gap-[20px]">
           <TextField
             label="Coupon Code"
             variant="outlined"
             sx={{
-              width: '300px',
-              '& .MuiOutlinedInput-root': {
-                height: '50px',
-                color: 'black',
-                '& fieldset': { borderColor: 'black' },
-                '&:hover fieldset': { borderColor: 'black' },
-                '&.Mui-focused fieldset': { borderColor: 'black' },
+              width: "300px",
+              "& .MuiOutlinedInput-root": {
+                height: "50px",
+                color: "black",
+                "& fieldset": { borderColor: "black" },
+                "&:hover fieldset": { borderColor: "black" },
+                "&.Mui-focused fieldset": { borderColor: "black" },
               },
-              '& .MuiInputLabel-root': {
-                color: 'black',
-                '&.Mui-focused': { color: 'black' },
+              "& .MuiInputLabel-root": {
+                color: "black",
+                "&.Mui-focused": { color: "black" },
               },
             }}
           />
           <Button
-            sx={{ border: '1px solid red', color: 'red', height: '55px', width: '150px' }}
+            sx={{ border: "1px solid red", color: "red", height: "55px", width: "150px" }}
             variant="outlined"
           >
             Apply
@@ -150,9 +156,7 @@ const Cart = () => {
         </div>
 
         <div className="w-[35%] px-4 py-4 h-[350px] rounded-2xl border">
-          <h1 className="text-[25px] pt-[10px] ml-[20px]">
-            <b>Cart Total</b>
-          </h1>
+          <h1 className="text-[25px] pt-[10px] ml-[20px] font-bold">Cart Total</h1>
           <h1 className="text-[18px] mt-[25px] ml-[20px]">
             Subtotal: <b>${subtotal.toFixed(2)}</b>
           </h1>
@@ -163,14 +167,15 @@ const Cart = () => {
           <h1 className="text-[25px] mt-[25px] ml-[20px]">
             <b>Total: ${total.toFixed(2)}</b>
           </h1>
+
           <div className="text-center">
-            <Link to={'/CheckOut'}>
+            <Link to={"/CheckOut"}>
               <Button
                 sx={{
-                  width: '220px',
-                  height: '43px',
-                  marginTop: '30px',
-                  backgroundColor: '#DB4444',
+                  width: "220px",
+                  height: "43px",
+                  marginTop: "30px",
+                  backgroundColor: "#DB4444",
                 }}
                 variant="contained"
                 disabled={allProducts.length === 0}
