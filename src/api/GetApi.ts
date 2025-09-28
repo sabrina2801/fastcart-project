@@ -72,29 +72,29 @@ export const Color = createApi({
 
 // ✅ Корзина
 export const Cart = createApi({
-  reducerPath: 'Cart',
+  reducerPath: 'cartApi',
   baseQuery: baseQueryWithAuth,
   tagTypes: ['Cart'],
   endpoints: (build) => ({
-    GetCart: build.query({
+    useGetCartQuery: build.query({
       query: () => 'Cart/get-products-from-cart',
       providesTags: ['Cart'],
     }),
-    AddToCart: build.mutation({
+    useAddToCartMutation: build.mutation({
       query: (id) => ({
         url: `Cart/add-product-to-cart?id=${id}`,
         method: 'POST',
       }),
       invalidatesTags: ['Cart'],
     }),
-    DeleteFromCart: build.mutation({
+    useDeleteFromCartMutation: build.mutation({
       query: (id) => ({
         url: `Cart/delete-product-from-cart?id=${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Cart'],
     }),
-    ClearCart: build.mutation({
+    useClearCartMutation: build.mutation({
       query: () => ({
         url: 'Cart/clear-cart',
         method: 'DELETE',
@@ -103,6 +103,7 @@ export const Cart = createApi({
     }),
   }),
 });
+
 export const { useGetTodoQuery } = TodoApi;
 export const { useLazyGetTodoQuery, useGetByidQuery } = Product;
 export const { useGetColorQuery } = Color;

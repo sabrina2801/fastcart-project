@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   useClearCartMutation,
   useDeleteFromCartMutation,
   useGetCartQuery,
-} from '../api/GetApi';
+} from '../api/GetApi'; // исправлено имя импорта
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
@@ -14,12 +14,16 @@ const Cart = () => {
   const [clearCart] = useClearCartMutation();
   const [deleteFromCart] = useDeleteFromCartMutation();
   const baseUrl = import.meta.env.VITE_API_URL;
+  const [deletingId, setDeletingId] = useState(null);
 
   const handleDelete = async (id) => {
+    setDeletingId(id);
     try {
       await deleteFromCart(id);
     } catch (error) {
       console.error(error);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -33,7 +37,8 @@ const Cart = () => {
   const subtotal = useMemo(() => {
     return allProducts.reduce((sum, item) => {
       const price = item.product.discountPrice || item.product.price || 0;
-      return sum + price;
+      const quantity = item.quantity || 1;
+      return sum + price * quantity;
     }, 0);
   }, [allProducts]);
 
@@ -61,7 +66,7 @@ const Cart = () => {
             >
               <div className="flex items-center gap-[10px] w-[20%]">
                 <img
-                  src={`${baseUrl}images/${e.product.image}`}
+                  src={e.product.image ? `${baseUrl}images/${e.product.image}` : "/default-product.png"}
                   alt={e.product.productName}
                   className="w-[50px] h-[50px] object-cover"
                   onError={(e) => {
@@ -75,14 +80,17 @@ const Cart = () => {
                 <b>$</b> {e.product.price}
               </h1>
 
-              <div className="w-[58px] h-[40px] flex items-center justify-center">1</div>
+              <div className="w-[58px] h-[40px] flex items-center justify-center">
+                {e.quantity || 1}
+              </div>
 
               <h1>
-                <b>$</b> {e.product.discountPrice || e.product.price}
+                <b>$</b> {(e.product.discountPrice || e.product.price) * (e.quantity || 1)}
               </h1>
 
               <button
                 onClick={() => handleDelete(e.id)}
+                disabled={deletingId === e.id}
                 className="text-red-500 hover:text-red-700 focus:outline-none cursor-pointer"
                 aria-label="Удалить товар"
               >
