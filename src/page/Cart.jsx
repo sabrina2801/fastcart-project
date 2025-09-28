@@ -14,11 +14,12 @@ const Cart = () => {
   const [clearCart] = useClearCartMutation();
   const [deleteFromCart] = useDeleteFromCartMutation();
   const baseUrl = import.meta.env.VITE_API_URL;
+
   const handleDelete = async (id) => {
     try {
       await deleteFromCart(id);
     } catch (error) {
-      console.error( error);
+      console.error(error);
     }
   };
 
@@ -29,7 +30,6 @@ const Cart = () => {
     );
   }, [cart]);
 
-
   const subtotal = useMemo(() => {
     return allProducts.reduce((sum, item) => {
       const price = item.product.discountPrice || item.product.price || 0;
@@ -37,7 +37,7 @@ const Cart = () => {
     }, 0);
   }, [allProducts]);
 
-  const shipping = 10; 
+  const shipping = 10;
   const total = subtotal + shipping;
 
   if (isLoading) return <div className="mt-[140px] text-center">Загрузка корзины...</div>;
@@ -59,28 +59,15 @@ const Cart = () => {
               key={e.id}
               className="flex px-10 py-2 rounded shadow justify-around items-center ml-[5%] bg-gray-50 mt-[20px] w-[90%] gap-4"
             >
-          
-
-
-
-
-       <div className="flex items-center gap-[10px] w-[20%]">
-  <img
-    src={`${baseUrl}images/${t.image}`}
-    alt={t.productName}
-     className="w-[50px] h-[50px] object-cover"
-    onError={(e) => {
-      e.currentTarget.src = "/default-product.png";
-    }}
-  />
-
-
-
-
-
-
-
-
+              <div className="flex items-center gap-[10px] w-[20%]">
+                <img
+                  src={`${baseUrl}images/${e.product.image}`}
+                  alt={e.product.productName}
+                  className="w-[50px] h-[50px] object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = "/default-product.png";
+                  }}
+                />
                 <h1 className="text-[16px] font-semibold">{e.product.productName}</h1>
               </div>
 
@@ -88,7 +75,6 @@ const Cart = () => {
                 <b>$</b> {e.product.price}
               </h1>
 
-     
               <div className="w-[58px] h-[40px] flex items-center justify-center">1</div>
 
               <h1>
@@ -121,7 +107,6 @@ const Cart = () => {
           </Button>
         </Link>
         <div className="flex gap-[20px]">
-    
           <Button sx={{ border: '1px solid black', color: 'black' }} variant="outlined">
             Update Cart
           </Button>
@@ -162,7 +147,6 @@ const Cart = () => {
             Apply
           </Button>
         </div>
-
 
         <div className="w-[35%] px-4 py-4 h-[350px] rounded-2xl border">
           <h1 className="text-[25px] pt-[10px] ml-[20px]">
