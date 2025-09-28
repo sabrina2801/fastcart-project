@@ -13,7 +13,7 @@ const Cart = () => {
   const { data: cart, isLoading, isError } = useGetCartQuery();
   const [clearCart] = useClearCartMutation();
   const [deleteFromCart] = useDeleteFromCartMutation();
-
+  const baseUrl = import.meta.env.VITE_API_URL;
   const handleDelete = async (id) => {
     try {
       await deleteFromCart(id);
@@ -59,13 +59,28 @@ const Cart = () => {
               key={e.id}
               className="flex px-10 py-2 rounded shadow justify-around items-center ml-[5%] bg-gray-50 mt-[20px] w-[90%] gap-4"
             >
-              <div className="flex items-center gap-[10px] w-[20%]">
-                <img
-                  src={`http://37.27.29.18:8002/images/${e.product.image}`}
-                  alt={e.product.productName}
-                  className="w-[50px] h-[50px] object-cover"
-                  onError={(ev) => (ev.target.src = "/default-product.png")}
-                />
+          
+
+
+
+
+       <div className="flex items-center gap-[10px] w-[20%]">
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+     className="w-[50px] h-[50px] object-cover"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+
+
+
+
+
+
+
+
                 <h1 className="text-[16px] font-semibold">{e.product.productName}</h1>
               </div>
 

@@ -13,6 +13,7 @@ const Byid = () => {
   const { data, isLoading } = useGetByidQuery(id);
   const { data: produkt } = useLazyGetTodoQuery();
   const [value, setValue] = useState(1);
+   const baseUrl = import.meta.env.VITE_API_URL;
 
   const [wish, setWish] = useState(
     JSON.parse(localStorage.getItem("wish")) || []
@@ -59,6 +60,31 @@ const Byid = () => {
                     className="w-full object-cover rounded-lg shadow-xl"
                     onError={(e) => { e.target.src = "/default-product.png"; }}
                   />
+
+
+
+
+                      
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+    className="w-full object-cover rounded-lg shadow-xl"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+
+
+                  
+
+
+
+
+
+
+
+
+
                   <FavoriteBorderIcon
                     onClick={() => toggleWish(product)}
                     sx={{
@@ -76,14 +102,16 @@ const Byid = () => {
           </Swiper>
 
        
-           <div className="flex justify-center">
-          <img
-           src={`http://37.27.29.18:8002/images/${product?.images[0]?.images}`}
-          alt={product?.productName}
-          className="w-[500px] h-[450px] mt-[50px] mb-3"
-          onError={(e) => { e.target.src = "/default-product.png"; }}
-           />
-        </div>
+        <div className="flex justify-center">
+  <img
+    src={`${baseUrl}images/${product?.images[0]?.images}`}
+    alt={product?.productName}
+    className="w-[500px] h-[450px] mt-[50px] mb-3"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+</div>
 
           <div className="w-full ml-[20px] md:w-1/2 space-y-4 mt-[50px]">
             <h1 className="text-3xl font-bold">{product?.productName}</h1>
@@ -185,14 +213,25 @@ const Byid = () => {
 
                 
 
-                  <div className="flex justify-center">
-                    <img
-                      src={`http://37.27.29.18:8002/images/${t.image}`}
-                      alt={t.productName}
-                      className="w-[150px] h-[100px] mb-3"
-                      onError={(e) => { e.target.src = "/default-product.png"; }}
-                    />
-                  </div>
+                 
+
+
+
+
+
+     <div className="flex justify-center">
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+     className="w-[150px] h-[100px] mb-3"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+</div>
+
+
+
 
                   <div className="opacity-0 hover:opacity-100 w-[248px] ml-[-15px] mt-[12px] hover:bg-[black] text-white py-2 px-4 rounded-[3px] cursor-pointer transition duration-300 text-center">
                     Add To Cart
