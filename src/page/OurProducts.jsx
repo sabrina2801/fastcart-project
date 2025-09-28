@@ -25,6 +25,7 @@ import useWish from '../hooks/useWish';
 const OurProducts = () => {
   const { data: produkt } = useLazyGetTodoQuery();
   const [wish, setWish] = useWish();
+    const baseUrl = import.meta.env.VITE_API_URL;
 
   const [filter, setFilter] = React.useState('');
   const handleChange = (event) => setFilter(event.target.value);
@@ -228,14 +229,18 @@ const OurProducts = () => {
                   sx={{ fontSize: 28 }}
                 />
 
-                <div className="flex justify-center">
-                  <img
-                    src={`http://37.27.29.18:8002/images/${t.image}`}
-                    alt={t.productName}
-                    className="w-[200px] h-[180px] object-contain my-4"
-                    onError={(e) => { e.target.src = '/default-product.png'; }}
-                  />
-                </div>
+              
+
+                         <div className="flex justify-center">
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+    className="w-[200px] h-[180px] object-contain my-4"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+</div>
 
                 <h2 className="text-lg font-semibold text-center mt-2">{t.productName}</h2>
 

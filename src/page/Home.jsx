@@ -331,14 +331,42 @@ const Home = () => {
           }}
         />
 
-        <div className="flex justify-center">
-          <img
-            src={`http://37.27.29.18:8002/images/${t.image}`}
-            alt={t.productName}
-            className="w-[250px] h-[200px] mb-3 mt-[10px]"
-            onError={(e) => { e.target.src = "/default-product.png"; }}
-          />
-        </div>
+               <div className="flex justify-center">
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+    className="w-[250px] h-[200px] mt-[10px] mb-3"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <div   className="opacity-0 hover:opacity-100 w-[300px] ml-[-16px] mt-[17px] text-white py-2 px-4 rounded-[3px] cursor-pointer transition duration-300 text-center bg-black">
           Add to Wishlist
@@ -469,14 +497,16 @@ const Home = () => {
           }}
         />
 
-        <div className="flex justify-center">
-          <img
-            src={`http://37.27.29.18:8002/images/${t.image}`}
-            alt={t.productName}
-            className="w-[250px] h-[200px] mb-3 mt-[10px]"
-            onError={(e) => { e.target.src = "/default-product.png"; }}
-          />
-        </div>
+               <div className="flex justify-center">
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+    className="w-[250px] h-[200px] mt-[10px] mb-3"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+</div>
 
         <div className="opacity-0 hover:opacity-100 w-[300px] ml-[-16px] mt-[17px] text-white py-2 px-4 rounded-[3px] cursor-pointer transition duration-300 text-center bg-black">
           Add to Wishlist
@@ -536,14 +566,16 @@ const Home = () => {
           }}
         />
 
-        <div className="flex justify-center">
-          <img
-            src={`http://37.27.29.18:8002/images/${t.image}`}
-            alt={t.productName}
-            className="w-[250px] h-[200px] mb-3 mt-[10px]"
-            onError={(e) => { e.target.src = "/default-product.png"; }}
-          />
-        </div>
+           <div className="flex justify-center">
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+    className="w-[250px] h-[200px] mt-[10px] mb-3"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+</div>
 
         <div className="opacity-0 hover:opacity-100 w-[300px] ml-[-16px] mt-[17px] text-white py-2 px-4 rounded-[3px] cursor-pointer transition duration-300 text-center bg-black">
           Add to Wishlist

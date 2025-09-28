@@ -14,7 +14,7 @@ const Wishlist = () => {
   const { data: produkt } = useLazyGetTodoQuery();
   const [wish, setWish] = useWish();
     const [addToCart] = useAddToCartMutation()
-
+  const baseUrl = import.meta.env.VITE_API_URL;
   const handleDelete = (id) => {
     const updatedWish = wish.filter((e) => e.id !== id);
     setWish(updatedWish);
@@ -52,14 +52,19 @@ const Wishlist = () => {
           <DeleteOutlineIcon onClick={() => handleDelete(el.id)} />
         </div>
 
-        <div className="flex justify-center">
-          <img
-            src={el.image ? `http://37.27.29.18:8002/images/${el.image}` : "/default-product.png"}
-            alt={el.productName || "Product"}
-            className="w-[250px] h-[200px] mt-[10px] mb-3"
-            onError={(e) => { e.target.src = "/default-product.png"; }}
-          />
-        </div>
+    
+
+
+                 <div className="flex justify-center">
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+     className="w-[250px] h-[200px] mt-[10px] mb-3"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+</div>
 
         <div onClick={() => addToCart(el.id)} className="opacity-0 hover:opacity-100 w-[350px]  mt-[8px] text-white py-2 px-4 rounded-[3px] cursor-pointer transition duration-300 text-center bg-black">
           <ShoppingCartOutlinedIcon /> <span> Add To Cart</span>
@@ -104,16 +109,18 @@ const Wishlist = () => {
                   <VisibilityIcon sx={{ marginLeft: "230px" }} />
                 </Link>
 
-                <div className="flex justify-center">
-                  <img
-                    src={`http://37.27.29.18:8002/images/${t.image}`}
-                    alt={t.productName}
-                    className="w-[250px] h-[230px] mt-[10px] shadow"
-                    onError={(e) => {
-                      e.target.src = "/default-product.png";
-                    }}
-                  />
-                </div>
+                
+
+                         <div className="flex justify-center">
+  <img
+    src={`${baseUrl}images/${t.image}`}
+    alt={t.productName}
+  className="w-[250px] h-[230px] mt-[10px] shadow"
+    onError={(e) => {
+      e.currentTarget.src = "/default-product.png";
+    }}
+  />
+</div>
 
                 <div className="opacity-0 hover:opacity-100 w-[299px] ml-[-15px] mt-[25px] hover:bg-[black] text-white py-2 px-4 rounded-[3px] cursor-pointer transition duration-300 text-center">
                   <ShoppingCartOutlinedIcon /> <span> Add To Cart</span>
