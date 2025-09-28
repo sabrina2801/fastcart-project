@@ -11,24 +11,18 @@ import LoopOutlinedIcon from "@mui/icons-material/LoopOutlined";
 const Byid = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetByidQuery(id);
-  const { data: produkt } = useLazyGetTodoQuery();
+  const [trigger, { data: produkt }] = useLazyGetTodoQuery();
+
+  // ✅ безопасно получаем baseUrl
+  const baseUrl = (import.meta.env.VITE_API_URL || "https://store-api.softclub.tj/").replace(/\/?$/, "/");
+
   const [value, setValue] = useState(1);
-   const baseUrl = import.meta.env.VITE_API_URL;
-
-  const [wish, setWish] = useState(
-    JSON.parse(localStorage.getItem("wish")) || []
-  );
-
+  const [wish, setWish] = useState(JSON.parse(localStorage.getItem("wish")) || []);
   const product = data?.data;
 
   const toggleWish = (item) => {
     const isInWish = wish.find((e) => e.id === item.id);
-    let updatedWish;
-    if (!isInWish) {
-      updatedWish = [...wish, item];
-    } else {
-      updatedWish = wish.filter((e) => e.id !== item.id);
-    }
+    const updatedWish = isInWish ? wish.filter((e) => e.id !== item.id) : [...wish, item];
     localStorage.setItem("wish", JSON.stringify(updatedWish));
     setWish(updatedWish);
   };
@@ -46,45 +40,17 @@ const Byid = () => {
       <div className="max-w-7xl mt-10 p-4 ml-[10%]">
         <div className="flex flex-col md:flex-row gap-8">
 
-          <Swiper
-            direction="vertical"
-            className="w-[170px] z-10 relative h-[500px] mt-[20px] gap-10"
-            slidesPerView={3.5}
-          >
+          {/* Слайдер мини-изображений */}
+          <Swiper direction="vertical" className="w-[170px] h-[500px] mt-[20px]" slidesPerView={3.5}>
             {product?.images?.map((img, index) => {
               const isInWish = wish.find((e) => e.id === product.id);
               return (
                 <SwiperSlide key={index} className="relative">
                   <img
-                    src={`http://37.27.29.18:8002/images/${img.images}`}
+                    src={`${baseUrl}images/${img.images}`}
                     className="w-full object-cover rounded-lg shadow-xl"
-                    onError={(e) => { e.target.src = "/default-product.png"; }}
+                    onError={(e) => { e.currentTarget.src = "/default-product.png"; }}
                   />
-
-
-
-
-                      
-  <img
-    src={`${baseUrl}images/${t.image}`}
-    alt={t.productName}
-    className="w-full object-cover rounded-lg shadow-xl"
-    onError={(e) => {
-      e.currentTarget.src = "/default-product.png";
-    }}
-  />
-
-
-                  
-
-
-
-
-
-
-
-
-
                   <FavoriteBorderIcon
                     onClick={() => toggleWish(product)}
                     sx={{
@@ -101,24 +67,22 @@ const Byid = () => {
             })}
           </Swiper>
 
-       
-        <div className="flex justify-center">
-  <img
-    src={`${baseUrl}images/${product?.images[0]?.images}`}
-    alt={product?.productName}
-    className="w-[500px] h-[450px] mt-[50px] mb-3"
-    onError={(e) => {
-      e.currentTarget.src = "/default-product.png";
-    }}
-  />
-</div>
+          {/* Главное изображение */}
+          <div className="flex justify-center">
+            <img
+              src={`${baseUrl}images/${product?.images[0]?.images}`}
+              alt={product?.productName}
+              className="w-[500px] h-[450px] mt-[50px] mb-3"
+              onError={(e) => { e.currentTarget.src = "/default-product.png"; }}
+            />
+          </div>
 
+          {/* Информация о продукте */}
           <div className="w-full ml-[20px] md:w-1/2 space-y-4 mt-[50px]">
             <h1 className="text-3xl font-bold">{product?.productName}</h1>
 
             <div className="flex items-center gap-1 mt-2 text-yellow-400 text-lg">
-              ★★★★☆
-              <span className="text-gray-500 text-sm ml-2">(88)</span>
+              ★★★★☆ <span className="text-gray-500 text-sm ml-2">(88)</span>
             </div>
 
             <div className="flex items-center gap-3 mt-2">
@@ -143,33 +107,19 @@ const Byid = () => {
 
             <div className="flex gap-[10px] mt-[30px] items-center">
               <div className="flex">
-                <Button
-                  onClick={() => setValue((v) => (v > 0 ? v - 1 : 0))}
-                  sx={{ border: "1px solid #00000080", color: "#00000080", width: "80px", height: "35px" }}
-                >
-                  -
-                </Button>
-                <h1 className="border border-[#00000080] w-[70px] h-[35px] rounded flex items-center justify-center">
-                  <b>{value}</b>
-                </h1>
-                <Button
-                  onClick={() => setValue(value + 1)}
-                  sx={{ border: "1px solid #00000080", color: "#00000080", width: "80px", height: "35px" }}
-                >
-                  +
-                </Button>
+                <Button onClick={() => setValue((v) => (v > 0 ? v - 1 : 0))} sx={{ border: "1px solid #00000080", color: "#00000080", width: "80px", height: "35px" }}>-</Button>
+                <h1 className="border border-[#00000080] w-[70px] h-[35px] rounded flex items-center justify-center"><b>{value}</b></h1>
+                <Button onClick={() => setValue(value + 1)} sx={{ border: "1px solid #00000080", color: "#00000080", width: "80px", height: "35px" }}>+</Button>
               </div>
 
               <Button sx={{ width: "110px", backgroundColor: "#DB4444", height: "35px" }} variant="contained">
                 Buy Now
               </Button>
-              
 
               <FavoriteBorderIcon
                 onClick={() => toggleWish(product)}
                 sx={{
                   fontSize: 28,
-                  
                   color: wish.find((e) => e.id === product.id) ? "red" : "gray",
                   cursor: "pointer",
                 }}
@@ -188,50 +138,31 @@ const Byid = () => {
         </div>
       </div>
 
-
-      <div className="flex gap-[10px] ml-[130px]">
+      {/* Related Items */}
+      <div className="flex gap-[10px] ml-[130px] mt-[50px]">
         <div className="w-[20px] h-[40px] rounded-[5px] bg-[#DB4444]"></div>
-        <h1 className="flex items-center text-[20px] font-bold text-[#DB4444]">
-          Related Item
-        </h1>
+        <h1 className="flex items-center text-[20px] font-bold text-[#DB4444]">Related Item</h1>
       </div>
 
-      <div className="ml-[10px] mt-[70px]">
+      <div className="ml-[10px] mt-[50px]">
         <Swiper spaceBetween={20} slidesPerView={4.5} className="mySwiper mt-10 ml-[20%] w-[90%]">
           {produkt?.data?.products?.slice(0, 6)?.map((t) => {
-            const isInWishRelated = wish.find((e) => e.id === t.id);
             return (
               <SwiperSlide key={t.id}>
                 <div className="relative w-[250px] bg-gray-50 rounded-[5px] p-4 h-[240px] shadow-2xl">
-                  <div className="absolute top-2 left-2 bg-[#DB4444] text-white px-3 py-1 rounded text-sm">
-                    -40%
-                  </div>
-
+                  <div className="absolute top-2 left-2 bg-[#DB4444] text-white px-3 py-1 rounded text-sm">-40%</div>
                   <Link to={`/ById/${t.id}`}>
                     <VisibilityIcon sx={{ marginLeft: "190px" }} />
                   </Link>
 
-                
-
-                 
-
-
-
-
-
-     <div className="flex justify-center">
-  <img
-    src={`${baseUrl}images/${t.image}`}
-    alt={t.productName}
-     className="w-[150px] h-[100px] mb-3"
-    onError={(e) => {
-      e.currentTarget.src = "/default-product.png";
-    }}
-  />
-</div>
-
-
-
+                  <div className="flex justify-center">
+                    <img
+                      src={`${baseUrl}images/${t.image}`}
+                      alt={t.productName}
+                      className="w-[150px] h-[100px] mb-3"
+                      onError={(e) => { e.currentTarget.src = "/default-product.png"; }}
+                    />
+                  </div>
 
                   <div className="opacity-0 hover:opacity-100 w-[248px] ml-[-15px] mt-[12px] hover:bg-[black] text-white py-2 px-4 rounded-[3px] cursor-pointer transition duration-300 text-center">
                     Add To Cart
@@ -239,15 +170,13 @@ const Byid = () => {
                 </div>
 
                 <h2 className="text-[20px] font-bold mt-4">{t.productName}</h2>
-
                 <div className="flex items-center gap-3 mt-2">
                   <p className="text-red-500 font-bold">${t.price}</p>
                   <p className="text-gray-400 line-through">$160</p>
                 </div>
 
                 <div className="flex items-center gap-1 mt-2 text-yellow-400 text-lg">
-                  ★★★★☆
-                  <span className="text-gray-500 text-sm ml-2">(88)</span>
+                  ★★★★☆ <span className="text-gray-500 text-sm ml-2">(88)</span>
                 </div>
               </SwiperSlide>
             );
