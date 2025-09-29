@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAddToCartMutation, useLazyGetTodoQuery } from "../api/GetApi";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Link } from "react-router-dom";
@@ -14,8 +14,12 @@ const Wishlist = () => {
   const [wish, setWish] = useWish();
   const [addToCart] = useAddToCartMutation();
 
-  // ✅ baseUrl с защитой от undefined
-  const baseUrl = (import.meta.env.VITE_API_URL || "https://store-api.softclub.tj/").replace(/\/?$/, "/");
+  const baseUrl = import.meta.env.VITE_API_URL;
+
+  // 🚀 Загружаем продукты "Just For You" при первом рендере
+  useEffect(() => {
+    trigger();
+  }, [trigger]);
 
   // 🗑️ Удаление товара из wishlist
   const handleDelete = (id) => {
@@ -25,7 +29,7 @@ const Wishlist = () => {
   // 🛒 Добавление одного товара в корзину
   const handleAddToCart = async (id) => {
     try {
-      await addToCart({ productId: id });
+      await addToCart(id); // ✅ исправлено: передаем просто id
     } catch (error) {
       console.error("Ошибка добавления в корзину:", error);
     }
@@ -35,7 +39,7 @@ const Wishlist = () => {
   const handleMoveAllToBag = async () => {
     try {
       for (const el of wish) {
-        await addToCart({ productId: el.id });
+        await addToCart(el.id); // ✅ исправлено
       }
       setWish([]);
     } catch (error) {
